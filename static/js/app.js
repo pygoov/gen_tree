@@ -1,10 +1,10 @@
 
 (()=>{
 
-
     $(document).ready(() => {
         console.log('----- MANI LOADING -----')
         drawManager.init()
+        treeManager.init()
 
         contextMenuController.wrapContextMenu(
             $('#graph'), 
