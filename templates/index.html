@@ -1,0 +1,66 @@
+<!DOCTYPE html5>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>GenTree</title>
+    <link rel="shortcut icon" type="image/png" href="static/img/favicon.png" />
+
+    <!-- VENDER -->
+    <link rel="stylesheet" href="static/vender/semantic.min.css">
+    <script src="static/vender/jquery.min.js"></script>
+    <script src="static/vender/semantic.min.js"></script>
+    <script src="static/vender/d3.v5.min.js"></script>
+
+    <!-- TOOLS -->
+    <script src="static/js/tools/context_menu_controller.js"></script>
+
+    <!-- APP -->
+    <link rel="stylesheet" href="static/css/app.css">
+    <script src="static/js/app.js"></script>
+    <script src="static/js/draw.js"></script>
+
+
+</head>
+
+<body class="site">
+    <div class="ui fixed inverted menu">
+        <div class="ui container">
+            <div class="header item">
+                <i class="compress icon"></i>
+                Gen Tree
+            </div>
+            <div class="ui simple dropdown item">
+                Файл
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="ui button item" data-controll-id="fileOpen">Открыть</div>
+                    <div class="ui button item" data-controll-id="fileSave">Сохранить</div>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui two column grid full_height">
+        <div class="ten wide column full_height">
+            <svg class="main-svg" id="graph"></svg>
+        </div>
+        <div class="six wide column">
+            four wide column
+        </div>
+    </div>
+
+
+
+    <!-- <div class="ui inverted vertical segment">
+        <div class="ui center aligned container">
+            <img src="static/img/favicon.png" class="ui centered mini image">
+            <div class="ui horizontal inverted small divided link list">
+                xxx
+            </div>
+        </div>
+    </div> -->
+    
+</body>
+
+</html>
