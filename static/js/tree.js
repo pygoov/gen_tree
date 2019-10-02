@@ -1,5 +1,17 @@
 (() => {
 
+    var dragHandler = d3.drag()
+        .on("start", function () {
+            var current = d3.select(this);
+            deltaX = current.attr("x") - d3.event.x;
+            deltaY = current.attr("y") - d3.event.y;
+        })
+        .on("drag", function () {
+            d3.select(this)
+                .attr("x", d3.event.x + deltaX)
+                .attr("y", d3.event.y + deltaY);
+        })
+
     window.treeManager = {
         peoples: [],
         links: [],
@@ -58,6 +70,8 @@
                         .style("stroke", "red")
                 },
                 transform(trnsf){
+                    console.log('transform:')
+                    console.log(trnsf)
                     this.rectObj.attr("transform", trnsf);
                     this.textObj.attr("transform", trnsf);
                 },
@@ -75,6 +89,8 @@
                         .on("mouseover", ()=>{this.handleMouseOver()})
                         .on("mouseout", ()=>{this.handleMouseOut()})
                         .on("mousedown", ()=>{_this.selectPeople(this)})
+                    
+                    dragHandler(this.rectObj)
 
                     this.textObj = drawManager.createObject("text")
                         .attr("x", +this.rectObj.attr('x') + +this.rectObj.attr('width') / 2)
