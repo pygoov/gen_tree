@@ -1,11 +1,11 @@
 (()=>{
 
     window.contextMenuController = {
-        build_body: function(){
+        build_body(){
             return $('<div class="ui vertical menu ctx-menu hide">')
                 .css('z-index','1000')
         },
-        build_button: function(button, ctxMenu, e) {
+        build_button(button, ctxMenu, e) {
             if(!button.is_show(e)) return null
             let item = $('<a class="item small">')
                 .text(button.text)
@@ -31,7 +31,7 @@
             }
             return item
         },
-        wrapContextMenu: function(elem, buttons) {
+        wrapContextMenu(elem, buttons) {
             $(elem).contextmenu((e) => {
                 e.preventDefault()
                 e.returnValue = false;
@@ -60,32 +60,29 @@
                 }
 
             })
+        },
+        clearing(target){
+            let ctxMenus = $('.ctx-menu')
+
+            ctxMenus.each((i, item)=>{
+                ctxMenu = $(item)
+
+                if(ctxMenu.hasClass('hide')) {
+                    return
+                }
+
+                if (!ctxMenu.is(target) && ctxMenu.has(target).length === 0)
+                {
+                    ctxMenu.remove()
+                }
+            })
         }
     }
 
     $(document).ready(() => {
-        setTimeout(()=>{
-            
-            $('#graph').mousedown(function(e) {console.log('xxx')})
-
-            
-            $(document).mousedown(function(e) {
-                let ctxMenus = $('.ctx-menu')
-    
-                ctxMenus.each((i, item)=>{
-                    ctxMenu = $(item)
-    
-                    if(ctxMenu.hasClass('hide')) {
-                        return
-                    }
-    
-                    if (!ctxMenu.is(e.target) && ctxMenu.has(e.target).length === 0)
-                    {
-                        ctxMenu.remove()
-                    }
-                })
-            })
-        }, 1000)
+        $(document).mousedown(function(e) {
+            contextMenuController.clearing(e.target)
+        })
         
     })
 

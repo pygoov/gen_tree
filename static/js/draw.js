@@ -27,17 +27,22 @@
                 .scaleExtent([0.1, 40])
                 // .translateExtent([[-this.width, -this.width], [this.width + 90, this.height + 100]])
                 .on("zoom", () => { this.zoomZoomed() });
-
+            
+            this.svg.on("mousedown", () => {                
+                contextMenuController.clearing()
+            })
             this.svg.call(this.zoom);
+            
         },
-        appendObject(objType){
-            let obj = this.svg.append(objType)
+        createObject(objType){
+            return this.svg.append(objType)
+        },
+        addObject(obj){
             this.objects.push(obj)
-            return obj            
         },
         zoomZoomed() {
             for(let obj of this.objects){
-                obj.attr("transform", d3.event.transform);
+                obj.transform(d3.event.transform);
             }
         },
         zoomResetted() {
