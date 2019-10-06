@@ -7,10 +7,13 @@
         zoom: null,        
         view: null,
         objects: [],
+        k: 1, 
+        lastMousePos: null,
         init() {
+            let _this = this;
+
             this.width = $("#graph").width();
-            this.height = $("#graph").height();
-            console.log(`Width:${this.width} Height:${this.height}`)
+            this.height = $("#graph").height();            
 
             this.svg = d3.select("#graph")
                 .attr("width", this.width)
@@ -27,11 +30,14 @@
                 .scaleExtent([0.1, 40])
                 // .translateExtent([[-this.width, -this.width], [this.width + 90, this.height + 100]])
                 .on("zoom", () => { this.zoomZoomed() })
-                
 
             this.svg
                 .on("mousedown", () => {                
                     contextMenuController.clearing()
+                    _this.lastMousePos = {
+                        x: d3.event.x,
+                        y: d3.event.y
+                    }
                 })            
                 .call(this.zoom)
                 //.on("mousedown.zoom", null)

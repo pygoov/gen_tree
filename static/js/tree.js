@@ -5,6 +5,7 @@
         links: [],
         currentPeope: null,
         km:1,
+        lastTransform: null,
         init() {
             this.createPeople({
                 uid: "1",
@@ -42,6 +43,26 @@
             people.select()
             this.currentPeope = people
         },
+        addNewPeople(pos) {
+            if(this.lastTransform != null){
+                pos.x = (pos.x - this.lastTransform.x) / this.km
+                pos.y = (pos.y - this.lastTransform.y) / this.km
+            }
+
+            this.createPeople({
+                uid: makeRandomKey(32),
+                name: "Новый Человек",
+                description: "Описание человека",
+                position: {
+                    x: pos.x,
+                    y: pos.y
+                },
+                size: {
+                    width: 200,
+                    height: 40,
+                }
+            })
+        },
         createPeople(data) {
             let _this = this
             let people = {
@@ -67,9 +88,10 @@
                         .style("stroke", "red")
                 },
                 transform(trnsf) {
-                    _this.km = trnsf.k
-                    this.rectObj.attr("transform", trnsf)
-                    this.textObj.attr("transform", trnsf)
+                    _this.lastTransform = trnsf;
+                    _this.km = trnsf.k;
+                    this.rectObj.attr("transform", trnsf);
+                    this.textObj.attr("transform", trnsf);
                 },
                 dragged(){
                     this.position.x += d3.event.dx / _this.km
@@ -77,14 +99,16 @@
 
                     this.initPosition()
                 },
-                initPosition(){
+                initPosition() {
                     this.rectObj
                         .attr("x", this.position.x)
                         .attr("y", this.position.y)
+                        
                 
                     this.textObj
                         .attr("x", this.position.x + this.size.width / 2)
                         .attr("y", this.position.y + this.size.height / 2)
+                        
                 },
                 buildObject() {
                     this.rectObj = drawManager.createObject("rect")
@@ -116,6 +140,10 @@
                         )
                     
                     this.initPosition()
+                    if(_this.lastTransform != null){
+                        this.transform(_this.lastTransform)
+                        console.log(_this.lastTransform)
+                    }
                 },
                 handleMouseOver(){
                     // console.log('handleMouseOver')

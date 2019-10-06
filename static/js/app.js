@@ -13,10 +13,12 @@
                     return true;
                 },
                 click: (e) => {
-                    console.log('xxx')
+                    treeManager.addNewPeople(
+                        drawManager.lastMousePos
+                    )
                 },
                 click_is_close: true,
-                text: "Добавить дочерний концепт в конец",
+                text: "Добавить человека",
                 icon_classes: "green add"
             }]
         )
