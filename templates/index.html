@@ -21,9 +21,6 @@
     <script src="static/js/draw.js"></script>
     <script src="static/js/tree.js"></script>
     <script src="static/js/app.js"></script>
-    
-    
-
 
 </head>
 
@@ -39,7 +36,7 @@
                 <i class="dropdown icon"></i>
                 <div class="menu">
                     <div class="ui button item" data-controll-id="fileOpen">Открыть</div>
-                    <div class="ui button item" data-controll-id="fileSave">Сохранить</div>                        
+                    <div class="ui button item" data-controll-id="fileSave">Сохранить</div>
                 </div>
             </div>
         </div>
@@ -47,10 +44,32 @@
 
     <div class="ui two column grid full_height">
         <div class="ten wide column full_height">
-            <svg class="main-svg" id="graph"></svg>
+            <div class="ui segment">
+                <svg class="main-svg" id="graph"></svg>
+            </div>
         </div>
-        <div class="six wide column">
-            four wide column
+        <div class="six wide column full_height">
+            <div class="ui segment full_height">
+                <h3 class="ui header">Описание Выбранного человека</h3>
+                <div class="ui form">
+                    <div class="field">
+                        <label>Имя</label>
+                        <input type="text" placeholder="Имя" data-controll-id="pName">
+                    </div>
+                    <div class="field">
+                        <label>Дата рождения</label>
+                        <input type="date" data-controll-id="pDateOfBirth">
+                    </div>
+                    <div class="field">
+                        <label>Дата смерти</label>
+                        <input type="date" data-controll-id="pDateOfDeath">
+                    </div>
+                    <div class="field">
+                        <label>Описание</label>
+                        <textarea rows="5" placeholder="Описание" data-controll-id="pDescription"></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -64,7 +83,7 @@
             </div>
         </div>
     </div> -->
-    
+
 </body>
 
 </html>

@@ -144,22 +144,7 @@
                         this.transform(_this.lastTransform)
                         console.log(_this.lastTransform)
                     }
-                },
-                handleMouseOver(){
-                    // console.log('handleMouseOver')
-                    // this.rectObj
-                    //     .transition()
-                    //     .duration(750)
-                    //     .style("stroke", "red")
-                },
-                handleMouseOut(){
-                    // console.log('handleMouseOut')
-                    // this.rectObj
-                    //     .transition()
-                    //     .duration(750)
-                    //     .style("stroke", "black")
                 }
-
             }
             people.buildObject()
             drawManager.addObject(people)
