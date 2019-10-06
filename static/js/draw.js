@@ -26,12 +26,15 @@
             this.zoom = d3.zoom()
                 .scaleExtent([0.1, 40])
                 // .translateExtent([[-this.width, -this.width], [this.width + 90, this.height + 100]])
-                .on("zoom", () => { this.zoomZoomed() });
-            
-            this.svg.on("mousedown", () => {                
-                contextMenuController.clearing()
-            })
-            this.svg.call(this.zoom);
+                .on("zoom", () => { this.zoomZoomed() })
+                
+
+            this.svg
+                .on("mousedown", () => {                
+                    contextMenuController.clearing()
+                })            
+                .call(this.zoom)
+                //.on("mousedown.zoom", null)
             
         },
         createObject(objType){
@@ -40,7 +43,7 @@
         addObject(obj){
             this.objects.push(obj)
         },
-        zoomZoomed() {
+        zoomZoomed() {            
             for(let obj of this.objects){
                 obj.transform(d3.event.transform);
             }
