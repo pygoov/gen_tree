@@ -12,8 +12,9 @@
         init() {
             let _this = this;
 
-            this.width = $("#graph").width();
-            this.height = $("#graph").height();            
+            let graph = $("#graph")
+            this.width = graph.width();
+            this.height = graph.height();            
 
             this.svg = d3.select("#graph")
                 .attr("width", this.width)
@@ -35,8 +36,8 @@
                 .on("mousedown", () => {                
                     contextMenuController.clearing()
                     _this.lastMousePos = {
-                        x: d3.event.x,
-                        y: d3.event.y
+                        x: d3.event.x - graph.position().left,
+                        y: d3.event.y - graph.position().top
                     }
                 })            
                 .call(this.zoom)
