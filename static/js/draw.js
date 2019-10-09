@@ -4,17 +4,18 @@
         width: null,
         height: null,
         svg: null,
-        zoom: null,        
+        zoom: null,
         view: null,
         objects: [],
-        k: 1, 
+        k: 1,
         lastMousePos: null,
+        lastTransform: null,
         init() {
             let _this = this;
 
             let graph = $("#graph")
             this.width = graph.width();
-            this.height = graph.height();            
+            this.height = graph.height();
 
             this.svg = d3.select("#graph")
                 .attr("width", this.width)
@@ -33,25 +34,35 @@
                 .on("zoom", () => { this.zoomZoomed() })
 
             this.svg
-                .on("mousedown", () => {                
+                .on("mousedown", () => {
                     contextMenuController.clearing()
                     _this.lastMousePos = {
                         x: d3.event.x - graph.position().left,
                         y: d3.event.y - graph.position().top
                     }
-                })            
+                })
                 .call(this.zoom)
-                //.on("mousedown.zoom", null)
+            //.on("mousedown.zoom", null)
+
+        },
+        createObject(objType, isLower=false) {
+            if(isLower){
+                return this.svg.insert(objType,":first-child")
+            }
+            else{
+                return this.svg.append(objType)
+            }
             
         },
-        createObject(objType){
-            return this.svg.append(objType)
-        },
-        addObject(obj){
+        addObject(obj) {
             this.objects.push(obj)
         },
-        zoomZoomed() {            
-            for(let obj of this.objects){
+        removeObject(obj) {
+            this.objects.splice(this.objects.indexOf(obj), 1);
+        },
+        zoomZoomed() {
+            this.lastTransform = d3.event.transform
+            for (let obj of this.objects) {
                 obj.transform(d3.event.transform);
             }
         },

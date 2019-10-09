@@ -3,20 +3,18 @@
     window.treeManager = {
         peoples: [],
         links: [],
-        currentPeope: null,
-        km: 1,
-        lastTransform: null,
+        currentPeople: null,
         init() {
 
             this.pName = $('[data-controll-id="pName"]')
                 .change(() => {
-                    if (this.currentPeope == null) return
-                    this.currentPeope.setName(this.pName.val())                    
+                    if (this.currentPeople == null) return
+                    this.currentPeople.setName(this.pName.val())
                 })
             this.pDescription = $('[data-controll-id="pDescription"]')
                 .change(() => {
-                    if (this.currentPeope == null) return
-                    this.currentPeope.setDescription(this.pDescription.val())                    
+                    if (this.currentPeople == null) return
+                    this.currentPeople.setDescription(this.pDescription.val())
                 })
 
             // this.pDateOfBirth = $('[data-controll-id="pDateOfBirth"]')
@@ -24,20 +22,33 @@
 
         },
         selectPeople(people) {
+
             for (let p of this.peoples) {
                 p.unselect()
             }
+
             if (people != null) {
+
+                if (this.currentPeople != null && window.isCtrlDown) {
+                    if (people != this.currentPeople) {
+                        this.createLink(this.currentPeople, people)
+                    }
+                }
+
                 people.select()
                 this.pName.val(people.name)
-                this.pDescription.val(people.description)                
+                this.pDescription.val(people.description)
             }
-            this.currentPeope = people
+            else {
+                this.pName.val('')
+                this.pDescription.val('')
+            }
+            this.currentPeople = people
         },
         addNewPeople(pos) {
-            if (this.lastTransform != null) {
-                pos.x = (pos.x - this.lastTransform.x) / this.km
-                pos.y = (pos.y - this.lastTransform.y) / this.km
+            if (drawManager.lastTransform != null) {
+                pos.x = (pos.x - drawManager.lastTransform.x) / drawManager.lastTransform.k
+                pos.y = (pos.y - drawManager.lastTransform.y) / drawManager.lastTransform.k
             }
 
             this.createPeople({
@@ -79,22 +90,27 @@
                         .style("stroke", "red")
                 },
                 setName(val) {
-                    this.name = val 
+                    this.name = val
                     this.textObj.text(this.name)
                     this.initPosition()
                 },
-                setDescription(val){
-                    this.description = val 
+                setDescription(val) {
+                    this.description = val
                 },
                 transform(trnsf) {
-                    _this.lastTransform = trnsf;
-                    _this.km = trnsf.k;
+                    drawManager.lastTransform = trnsf;
                     this.rectObj.attr("transform", trnsf);
                     this.textObj.attr("transform", trnsf);
                 },
                 dragged() {
-                    this.position.x += d3.event.dx / _this.km
-                    this.position.y += d3.event.dy / _this.km
+                    if (drawManager.lastTransform != null) {
+                        this.position.x += d3.event.dx / drawManager.lastTransform.k
+                        this.position.y += d3.event.dy / drawManager.lastTransform.k
+                    }
+                    else {
+                        this.position.x += d3.event.dx
+                        this.position.y += d3.event.dy
+                    }
 
                     this.initPosition()
                 },
@@ -108,8 +124,23 @@
 
                     this.textObj
                         .attr("x", this.position.x + this.size.width / 2)
-                        .attr("y", this.position.y + this.size.height / 2)                   
+                        .attr("y", this.position.y + this.size.height / 2)
 
+
+                    for (let link of _this.findLinks(this)) {
+                        link.initPosition()
+                    }
+                },
+                remove() {
+                    this.rectObj.remove()
+                    this.textObj.remove()
+
+                    drawManager.removeObject(this)
+                    _this.peoples.splice(_this.peoples.indexOf(this), 1);
+
+                    for (let link of _this.findLinks(this)) {
+                        link.remove()
+                    }
                 },
                 buildObject() {
                     this.rectObj = drawManager.createObject("rect")
@@ -138,12 +169,11 @@
                             d3.drag().on("drag", (d) => {
                                 people.dragged(d)
                             })
-                        )                        
+                        )
 
                     this.initPosition()
-                    if (_this.lastTransform != null) {
-                        this.transform(_this.lastTransform)
-                        console.log(_this.lastTransform)
+                    if (drawManager.lastTransform != null) {
+                        this.transform(drawManager.lastTransform)
                     }
                 }
             }
@@ -153,7 +183,54 @@
             this.peoples.push(people)
             return people
         },
-        createLink(data) {
+        findLinks(p1, p2 = null) {
+            let targetLinks = []
+            for (let link of this.links) {
+                if (p2 == null) {
+                    if (link.peoples.includes(p1)) {
+                        targetLinks.push(link)
+                    }
+                }
+                else {
+                    if (link.peoples.includes(p1) && link.peoples.includes(p2)) {
+                        targetLinks.push(link)
+                    }
+                }
+            }
+            return targetLinks
+        },
+        createLink(p1, p2) {
+            if (this.findLinks(p1, p2).length != 0) return
+            let _this = this
+
+            let link = {
+                peoples: [p1, p2],
+                lineObj: null,
+                transform(trnsf) {
+                    this.lineObj.attr("transform", trnsf);
+                },
+                remove() {
+                    this.lineObj.remove()
+                    drawManager.removeObject(this)
+                    _this.links.splice(_this.links.indexOf(this), 1);
+                },
+                initPosition() {
+                    this.lineObj
+                        .attr('x1', p1.position.x + p1.size.width / 2)
+                        .attr('x2', p2.position.x + p2.size.width / 2)
+                        .attr('y1', p1.position.y + p1.size.height / 2)
+                        .attr('y2', p2.position.y + p2.size.height / 2)
+                },
+                buildObject() {
+                    this.lineObj = drawManager.createObject("line", true)
+                        .attr('stroke', 'black')
+                        .attr('stroke-width', 2)
+                }
+            }
+            link.buildObject()
+            link.initPosition()
+            drawManager.addObject(link)
+            this.links.push(link)
 
         }
     }
