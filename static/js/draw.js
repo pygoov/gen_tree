@@ -51,8 +51,7 @@
             }
             else{
                 return this.svg.append(objType)
-            }
-            
+            }            
         },
         addObject(obj) {
             this.objects.push(obj)

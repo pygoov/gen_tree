@@ -4,8 +4,8 @@
         peoples: [],
         links: [],
         currentPeople: null,
+        currentLink: null,
         init() {
-
             this.pName = $('[data-controll-id="pName"]')
                 .change(() => {
                     if (this.currentPeople == null) return
@@ -16,13 +16,28 @@
                     if (this.currentPeople == null) return
                     this.currentPeople.setDescription(this.pDescription.val())
                 })
+        },
+        getJson(){
 
-            // this.pDateOfBirth = $('[data-controll-id="pDateOfBirth"]')
-            // this.pDateOfDeath = $('[data-controll-id="pDateOfDeath"]')
+            links_data = []
+            for(let link of this.links){
+                links_data.push(link.getJson())
+            }
 
+            peoples_data = []
+            for(let people of this.peoples){
+                peoples_data.push(people.getJson())
+            }
+
+            return {
+                "links": links_data,
+                "peoples": peoples_data
+            }
+        },
+        loadJson(data){
+            
         },
         selectPeople(people) {
-
             for (let p of this.peoples) {
                 p.unselect()
             }
@@ -36,6 +51,8 @@
                 }
 
                 people.select()
+
+                this.selectLink(null)
                 this.pName.val(people.name)
                 this.pDescription.val(people.description)
             }
@@ -45,6 +62,18 @@
             }
             this.currentPeople = people
         },
+        selectLink(link){
+            for (let l of this.links) {
+                l.unselect()
+            }
+
+            if (link != null) {
+                link.select()                
+                this.selectPeople(null)
+            }
+
+            this.currentLink = link
+        },
         addNewPeople(pos) {
             if (drawManager.lastTransform != null) {
                 pos.x = (pos.x - drawManager.lastTransform.x) / drawManager.lastTransform.k
@@ -53,7 +82,7 @@
 
             this.createPeople({
                 uid: makeRandomKey(32),
-                name: "Новый Человек",
+                name: "Новый человек",
                 description: "Описание человека",
                 position: {
                     x: pos.x,
@@ -75,6 +104,15 @@
                 size: data.size,
                 rectObj: null,
                 textObj: null,
+                getJson() {
+                    return {
+                        "uid": this.uid,
+                        "name": this.name,
+                        "description": this.description,
+                        "position": this.position,
+                        "size": this.size
+                    }
+                },
                 unselect() {
                     this.rectObj
                         .transition()
@@ -187,12 +225,12 @@
             let targetLinks = []
             for (let link of this.links) {
                 if (p2 == null) {
-                    if (link.peoples.includes(p1)) {
+                    if (link.peoples.includes(p1.uid)) {
                         targetLinks.push(link)
                     }
                 }
                 else {
-                    if (link.peoples.includes(p1) && link.peoples.includes(p2)) {
+                    if (link.peoples.includes(p1.uid) && link.peoples.includes(p2.uid)) {
                         targetLinks.push(link)
                     }
                 }
@@ -204,8 +242,28 @@
             let _this = this
 
             let link = {
-                peoples: [p1, p2],
+                peoples: [p1.uid, p2.uid],
                 lineObj: null,
+                getJson() {
+                    return {
+                        "peoples": this.peoples
+                    }
+                },
+                unselect() {
+                    this.lineObj
+                        .transition()
+                        .duration(200)
+                        .style('stroke', 'black')
+                        
+                        .attr('stroke-width', 4)
+                },
+                select() {
+                    this.lineObj
+                        .transition()
+                        .duration(200)                        
+                        .style("stroke", "red")
+                        .attr('stroke-width', 8)
+                },
                 transform(trnsf) {
                     this.lineObj.attr("transform", trnsf);
                 },
@@ -224,14 +282,18 @@
                 buildObject() {
                     this.lineObj = drawManager.createObject("line", true)
                         .attr('stroke', 'black')
-                        .attr('stroke-width', 2)
+                        .attr('stroke-width', 4)
+                        .on("mousedown", () => { _this.selectLink(this) })
+                    
+                    this.initPosition()
+                    if (drawManager.lastTransform != null) {
+                        this.transform(drawManager.lastTransform)
+                    }
                 }
             }
             link.buildObject()
-            link.initPosition()
-            drawManager.addObject(link)
             this.links.push(link)
-
+            drawManager.addObject(link)
         }
     }
 
