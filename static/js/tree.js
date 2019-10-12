@@ -7,25 +7,34 @@
         currentLink: null,
         init() {
             this.pName = $('[data-controll-id="pName"]')
+                .keyup(() => {
+                    if (this.currentPeople == null) return
+                    this.currentPeople.setName(this.pName.val())
+                })
                 .change(() => {
                     if (this.currentPeople == null) return
                     this.currentPeople.setName(this.pName.val())
                 })
+
             this.pDescription = $('[data-controll-id="pDescription"]')
+                .keyup(() => {
+                    if (this.currentPeople == null) return
+                    this.currentPeople.setDescription(this.pDescription.val())
+                })
                 .change(() => {
                     if (this.currentPeople == null) return
                     this.currentPeople.setDescription(this.pDescription.val())
                 })
         },
-        getJson(){
+        getJson() {
 
             links_data = []
-            for(let link of this.links){
+            for (let link of this.links) {
                 links_data.push(link.getJson())
             }
 
             peoples_data = []
-            for(let people of this.peoples){
+            for (let people of this.peoples) {
                 peoples_data.push(people.getJson())
             }
 
@@ -34,8 +43,8 @@
                 "peoples": peoples_data
             }
         },
-        loadJson(data){
-            
+        loadJson(data) {
+
         },
         selectPeople(people) {
             for (let p of this.peoples) {
@@ -62,13 +71,13 @@
             }
             this.currentPeople = people
         },
-        selectLink(link){
+        selectLink(link) {
             for (let l of this.links) {
                 l.unselect()
             }
 
             if (link != null) {
-                link.select()                
+                link.select()
                 this.selectPeople(null)
             }
 
@@ -254,13 +263,13 @@
                         .transition()
                         .duration(200)
                         .style('stroke', 'black')
-                        
+
                         .attr('stroke-width', 4)
                 },
                 select() {
                     this.lineObj
                         .transition()
-                        .duration(200)                        
+                        .duration(200)
                         .style("stroke", "red")
                         .attr('stroke-width', 8)
                 },
@@ -284,7 +293,7 @@
                         .attr('stroke', 'black')
                         .attr('stroke-width', 4)
                         .on("mousedown", () => { _this.selectLink(this) })
-                    
+
                     this.initPosition()
                     if (drawManager.lastTransform != null) {
                         this.transform(drawManager.lastTransform)

@@ -1,19 +1,18 @@
 
-(()=>{
+(() => {
 
     $(document).ready(() => {
         console.log('----- MANI LOADING -----')
 
         window.isCtrlDown = false
-        
+
         window.onkeydown = (e) => {
-            if (e.keyCode == 17){
+            if (e.keyCode == 17) {
                 window.isCtrlDown = true
             }
         }
-
-        window.onkeyup = (e)=>{
-            if (e.keyCode == 17){
+        window.onkeyup = (e) => {
+            if (e.keyCode == 17) {
                 window.isCtrlDown = false
             }
         }
@@ -22,7 +21,7 @@
         treeManager.init()
 
         contextMenuController.wrapContextMenu(
-            $('#graph'), 
+            $('#graph'),
             [
                 {
                     is_show: (e) => {
@@ -72,8 +71,8 @@
         //         $(`<a class="ui item" onclick="document.execCommand('SaveAs', true,'file.json');">Save this page</a>`)
         //             .attr('href', href)
         //     )
-            
-            
+
+
         //     // x.click()
         //     // let anchor = document.createElement('a');
         //     // anchor.download = fileName;
@@ -81,12 +80,12 @@
         //     // anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
         //     // anchor.click();
         // }
-        
-        $('[data-controll-id="fileOpen"]').click(()=>{
+
+        $('[data-controll-id="fileOpen"]').click(() => {
 
         })
 
-        $('[data-controll-id="fileSave"]').click(()=>{            
+        $('[data-controll-id="fileSave"]').click(() => {
             // saveToFile(
             //     JSON.stringify(treeManager.getJson()),
             //     "save.json"

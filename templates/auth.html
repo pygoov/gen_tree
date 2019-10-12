@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Auth</title>
+    <link rel="shortcut icon" type="image/png" href="static/img/favicon.png" />
+
+    <!-- VENDER -->
+    <link rel="stylesheet" href="static/vender/semantic.min.css">
+    <script src="static/vender/jquery.min.js"></script>
+    <script src="static/vender/semantic.min.js"></script>
+    <script src="static/vender/d3.v5.min.js"></script>
+
+    <style type="text/css">
+        body>.grid {
+            height: 100%;
+        }
+
+        .image {
+            margin-top: -100px;
+        }
+
+        .column {
+            max-width: 450px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            let getCookie = (name) => {
+                let matches = document.cookie.match(new RegExp(
+                    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+                ));
+                return matches ? decodeURIComponent(matches[1]) : undefined;
+            }
+            if(getCookie("gt_pass") != undefined){
+                alert('Пароль неверен')
+                document.cookie = "gt_pass=x; max-age=0";
+            }
+
+            let log_form = $('#formLogin');
+
+            log_form
+                .form({
+                    submit: function (e) {
+                        return false
+                    },
+                    fields: {
+                        password: {
+                            identifier: 'password',
+                            rules: [{
+                                type: 'empty',
+                                prompt: 'Пожалуйста, введите свой пароль'
+                            }]
+                        }
+                    }
+                });
+            let login = ()=>{
+                if (log_form.form('is valid')) {
+                    console.log('Send Identify')
+
+                    document.cookie = "gt_pass=" + $('#inpPass').val();
+                    location.reload()
+                }
+            }
+
+            $('#inpPass').keydown((e)=>{
+                if(e.key == "Enter") {
+                    login()
+                }
+            })
+
+            $('#btnLogin').click((e) => {
+                e.preventDefault();
+                login()                
+            })
+        });
+    </script>
+</head>
+
+<body>
+    <div class="ui middle aligned center aligned grid invert">
+        <div class="column">
+            <div class="ui large form" id='formLogin'>
+                <div class="ui segment">
+                    <div class="ui left divided header">
+                        Введите пароль
+                    </div>
+
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" id="inpPass" placeholder="Пароль">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="ui fluid large green submit button" id="btnLogin">Вход</div>
+                    </div>
+
+                </div>
+
+                <div class="ui error message"></div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
