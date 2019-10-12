@@ -26,7 +26,15 @@
                 .attr("x", 0.5)
                 .attr("y", 0.5)
                 .attr("width", this.width - 1)
-                .attr("height", this.height - 1)
+                .attr("height", this.height - 1)            
+
+            $( window ).resize(()=>{                    
+                this.width = graph.width();
+                this.height = graph.height();
+                this.view
+                    .attr("width", this.width - 1)
+                    .attr("height", this.height - 1)
+            })
 
             this.zoom = d3.zoom()
                 .scaleExtent([0.1, 40])
