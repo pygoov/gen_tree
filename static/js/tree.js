@@ -6,7 +6,9 @@
         currentPeople: null,
         currentLink: null,
         init() {
-            this.pName = $('[data-controll-id="pName"]')
+            let _this = this
+
+            this.pName = $('[data-control-id="pName"]')
                 .keyup(() => {
                     if (this.currentPeople == null) return
                     this.currentPeople.setName(this.pName.val())
@@ -16,7 +18,7 @@
                     this.currentPeople.setName(this.pName.val())
                 })
 
-            this.pDescription = $('[data-controll-id="pDescription"]')
+            this.pDescription = $('[data-control-id="pDescription"]')
                 .keyup(() => {
                     if (this.currentPeople == null) return
                     this.currentPeople.setDescription(this.pDescription.val())
@@ -25,9 +27,51 @@
                     if (this.currentPeople == null) return
                     this.currentPeople.setDescription(this.pDescription.val())
                 })
+
+            contextMenuController.wrapContextMenu(
+                $('#graph'),
+                [
+                    {
+                        is_show: (e) => {
+                            return true;
+                        },
+                        click: (e) => {
+                            _this.addNewPeople(
+                                drawManager.lastMousePos
+                            )
+                        },
+                        click_is_close: true,
+                        text: "Добавить человека",
+                        icon_classes: "green add"
+                    },
+                    {
+                        is_show: (e) => {
+                            return _this.currentPeople != null;
+                        },
+                        click: (e) => {
+                            _this.currentPeople.remove()
+                            _this.selectPeople(null)
+                        },
+                        click_is_close: true,
+                        text: "Удалить выбранного человека",
+                        icon_classes: "red close"
+                    },
+                    {
+                        is_show: (e) => {
+                            return _this.currentLink != null;
+                        },
+                        click: (e) => {
+                            _this.currentLink.remove()
+                            _this.selectLink(null)
+                        },
+                        click_is_close: true,
+                        text: "Удалить выбранную связь",
+                        icon_classes: "red close"
+                    }
+                ]
+            )
         },
         getJson() {
-
             links_data = []
             for (let link of this.links) {
                 links_data.push(link.getJson())
@@ -44,6 +88,22 @@
             }
         },
         loadJson(data) {
+            if(data.links == undefined || data.peoples == undefined){
+                alert('Файл неправильного формата!')
+                throw "ERROR: data not valid!"
+            }
+
+            for(let people of data.peoples){
+                this.createPeople(people)
+            }
+
+            for(let link of data.links){
+
+                this.createLink(
+                    link.peoples[0],
+                    link.peoples[1]
+                )
+            }
 
         },
         selectPeople(people) {
@@ -53,9 +113,9 @@
 
             if (people != null) {
 
-                if (this.currentPeople != null && window.isCtrlDown) {
+                if (this.currentPeople != null && app.isCtrlDown) {
                     if (people != this.currentPeople) {
-                        this.createLink(this.currentPeople, people)
+                        this.createLink(this.currentPeople.uid, people.uid)
                     }
                 }
 
@@ -90,7 +150,7 @@
             }
 
             this.createPeople({
-                uid: makeRandomKey(32),
+                uid: app.makeRandomKey(32),
                 name: "Новый человек",
                 description: "Описание человека",
                 position: {
@@ -174,7 +234,7 @@
                         .attr("y", this.position.y + this.size.height / 2)
 
 
-                    for (let link of _this.findLinks(this)) {
+                    for (let link of _this.findLinks(this.uid)) {
                         link.initPosition()
                     }
                 },
@@ -185,7 +245,7 @@
                     drawManager.removeObject(this)
                     _this.peoples.splice(_this.peoples.indexOf(this), 1);
 
-                    for (let link of _this.findLinks(this)) {
+                    for (let link of _this.findLinks(this.uid)) {
                         link.remove()
                     }
                 },
@@ -230,28 +290,36 @@
             this.peoples.push(people)
             return people
         },
-        findLinks(p1, p2 = null) {
+        findPeople(p_uid){
+            for(let people of this.peoples){
+                if(people.uid == p_uid) return people
+            }
+            return null
+        },
+        findLinks(p1_uid, p2_uid = null) {
             let targetLinks = []
             for (let link of this.links) {
-                if (p2 == null) {
-                    if (link.peoples.includes(p1.uid)) {
+                if (p2_uid == null) {
+                    if (link.peoples.includes(p1_uid)) {
                         targetLinks.push(link)
                     }
                 }
                 else {
-                    if (link.peoples.includes(p1.uid) && link.peoples.includes(p2.uid)) {
+                    if (link.peoples.includes(p1_uid) && link.peoples.includes(p2_uid)) {
                         targetLinks.push(link)
                     }
                 }
             }
             return targetLinks
         },
-        createLink(p1, p2) {
-            if (this.findLinks(p1, p2).length != 0) return
+        createLink(p1_uid, p2_uid) {
+            if (this.findLinks(p1_uid, p2_uid).length != 0) return
             let _this = this
+            let p1 = this.findPeople(p1_uid)
+            let p2 = this.findPeople(p2_uid)
 
             let link = {
-                peoples: [p1.uid, p2.uid],
+                peoples: [p1_uid, p2_uid],
                 lineObj: null,
                 getJson() {
                     return {

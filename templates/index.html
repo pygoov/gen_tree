@@ -13,11 +13,11 @@
     <script src="static/vender/d3.v5.min.js"></script>
 
     <!-- TOOLS -->
-    <script src="static/js/tools/random_tools.js"></script>
     <script src="static/js/tools/context_menu_controller.js"></script>
 
     <!-- APP -->
     <link rel="stylesheet" href="static/css/app.css">
+    <script src="static/js/fileManager.js"></script>
     <script src="static/js/draw.js"></script>
     <script src="static/js/tree.js"></script>
     <script src="static/js/app.js"></script>
@@ -25,8 +25,8 @@
 </head>
 
 <body class="site">
-    <div class="ui fixed inverted menu">
-        <div class="ui container" data-controll-id="mainMenu">
+    <div class="ui inverted menu">
+        <div class="ui container" data-control-id="mainMenu">
             <div class="header item">
                 <i class="compress icon"></i>
                 Gen Tree
@@ -35,16 +35,24 @@
                 Файл
                 <i class="dropdown icon"></i>
                 <div class="menu">
-                    <div class="ui button item" data-controll-id="fileOpen">Открыть</div>
-                    <div class="ui button item" data-controll-id="fileSave">Сохранить</div>
+                    <div class="ui button item" data-control-id="fileOpen">Открыть</div>                    
+                    <div class="ui button item" data-control-id="fileSaveAs">Сохранить</div>
+                    <!-- <div class="ui button item" data-control-id="fileDownload">Загрузить</div> -->
                 </div>
             </div>
+            <!-- <div class="ui simple dropdown item">
+                О программе
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="ui button item" data-control-id="instruction">Инструкция</div>
+                </div>
+            </div> -->
         </div>
     </div>
 
-    <div class="ui two column grid full_height">
+    <div class="ui two column grid mainGrig">
         <div class="ten wide column full_height">
-            <div class="ui segment" data-controll-id="graphSegment">
+            <div class="ui segment full_height" data-control-id="graphSegment">
                 <svg class="main-svg" id="graph"></svg>
             </div>
         </div>
@@ -54,35 +62,50 @@
                 <div class="ui form">
                     <div class="field">
                         <label>Имя</label>
-                        <input type="text" placeholder="Имя" data-controll-id="pName">
+                        <input type="text" placeholder="Имя" data-control-id="pName">
                     </div>
-                    <!-- <div class="field">
-                        <label>Дата рождения</label>
-                        <input type="date" data-controll-id="pDateOfBirth">
-                    </div>
-                    <div class="field">
-                        <label>Дата смерти</label>
-                        <input type="date" data-controll-id="pDateOfDeath">
-                    </div> -->
                     <div class="field">
                         <label>Описание</label>
-                        <textarea rows="5" placeholder="Описание" data-controll-id="pDescription"></textarea>
+                        <textarea rows="5" placeholder="Описание" data-control-id="pDescription"></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- <div class="ui inverted vertical segment">
-        <div class="ui center aligned container">
-            <img src="static/img/favicon.png" class="ui centered mini image">
-            <div class="ui horizontal inverted small divided link list">
-                xxx
+    <div class="ui modal" data-control-id="mdFileSaveAs">
+        <div class="header">
+            Сохранение файла
+        </div>
+        <div class="content">
+            <div class="ui form" data-control-id="formSaveAs">
+                <div class="field">
+                    <label>Имя файла</label>
+                    <input type="text" name="fileName" placeholder="Имя файла" data-control-id="pFileName">
+                </div>
             </div>
         </div>
-    </div> -->
+        <div class="actions">
+            <div class="ui cancel blue button">Отмена</div>
+            <div class="ui approve red button">Сохранить</div>
+        </div>
+    </div>
+
+    <div class="ui modal" data-control-id="mdFileOpen">
+        <div class="header">
+            Открытие файла
+        </div>
+        <div class="content">
+            <div class="ui segment">
+                <div class="ui divided selection list" data-control-id="listFileOpen">
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui cancel blue button">Отмена</div>
+            <div class="ui approve green button">Открыть</div>
+        </div>
+    </div>
 
 </body>
 

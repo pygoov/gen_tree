@@ -26,9 +26,9 @@
                 .attr("x", 0.5)
                 .attr("y", 0.5)
                 .attr("width", this.width - 1)
-                .attr("height", this.height - 1)            
+                .attr("height", this.height - 1)
 
-            $( window ).resize(()=>{                    
+            $(window).resize(() => {
                 this.width = graph.width();
                 this.height = graph.height();
                 this.view
@@ -53,13 +53,16 @@
             //.on("mousedown.zoom", null)
 
         },
-        createObject(objType, isLower=false) {
-            if(isLower){
-                return this.svg.insert(objType,":first-child")
+        createObject(objType, isLower = false) {
+            let obj = null;
+            if (isLower) {
+                obj = this.svg.insert(objType, ":first-child")
             }
-            else{
-                return this.svg.append(objType)
-            }            
+            else {
+                obj = this.svg.insert(objType, ":last-child")
+            }
+
+            return obj
         },
         addObject(obj) {
             this.objects.push(obj)

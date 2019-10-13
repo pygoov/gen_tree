@@ -6,17 +6,21 @@ import sys
 import logic.errors as err
 
 from flask import render_template, jsonify, request, Response, redirect
-from logic.app import App
-from io import StringIO
 from functools import wraps
+from logic.app import App
+from logic.file_manager import FileManager
+from io import StringIO
 
 
 app = App(__name__)
+fm = FileManager()
+
 
 def is_auth():
     password = request.cookies.get('gt_pass')
     return password is not None and \
-           password == config.password
+        password == config.password
+
 
 @app.errorhandler(404)
 def resource_not_found(e):
@@ -28,6 +32,7 @@ def resource_not_found(e):
 @app.errorhandler(err.BadRequest)
 def rout_bad_request(e):
     return Response(str(e), status=e.response_code, mimetype='text/plain')
+
 
 @app.errorhandler(Exception)
 def rout_exception(e):
@@ -62,13 +67,51 @@ Traceback:
     return Response('Sorry, an error occurred on the server!', status=500)
 
 
-def check_duid_decorator(func):
+def auth_func(func):
     @wraps(func)
     def _wrap(*args, **kwargs):
         if request.method == 'POST' and not is_auth():
-            raise err.UnauthorizedError()        
+            raise err.UnauthorizedError()
         return func(*args, **kwargs)
     return _wrap
+
+app.append_decorer(auth_func)
+
+@app.route('/get_list_files', methods=["POST"])
+def get_list_files():    
+    list_files = fm.get_list_files()    
+    return jsonify(list_files)
+
+
+@app.route('/open_file', methods=["POST"])
+def open_file():
+    data = request.get_json(silent=True)
+    if data is None:
+        raise err.BadRequest('Data is not valid')
+
+    try:
+        file_name = str(data['file_name'])
+    except (KeyError, ValueError):
+        raise err.BadRequest('Data is not valid')
+
+    data = fm.open_file(file_name)
+    return jsonify(data)
+
+@app.route('/save_file', methods=["POST"])
+def save_file():
+    data = request.get_json(silent=True)
+    if data is None:
+        raise err.BadRequest('Data is not valid')
+
+    try:
+        file_name = str(data['file_name'])
+        file_data = dict(data['data'])
+    except (KeyError, ValueError):
+        raise err.BadRequest('Data is not valid')
+
+    fm.save_file(file_name, file_data)
+
+    return Response("OK", status=200)
 
 
 @app.route('/')

@@ -56,3 +56,6 @@ celerybeat-schedule
 
 # mypy
 .mypy_cache/
+
+# files
+data/

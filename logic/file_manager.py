@@ -5,7 +5,7 @@ import logic.errors as err
 import re
 
 
-class TreeManager:
+class FileManager:
     def __init__(self):
         self.data_folder = config.data_folder
         if not os.path.isdir(self.data_folder):
@@ -13,8 +13,8 @@ class TreeManager:
 
     def get_list_files(self):
         list_files = []
-        for file_name in os.listdir(self.data_folder):
-            if file_name[:-4] != '.json':
+        for file_name in os.listdir(self.data_folder):            
+            if file_name[-5:] != '.json':
                 continue
 
             file_path = os.path.join(self.data_folder, file_name)
@@ -27,15 +27,19 @@ class TreeManager:
         return list_files
 
     def save_file(self, file_name: str, data: dict):
-        if re.sub(r'[\w]+', '', file_name) != "":
+        if re.sub(r'[\w\s\.]+', '', file_name) != "":
             raise err.FileFormatNotValid()
+        
+        if file_name[-5:] != '.json':
+            file_name += '.json'
 
         file_path = os.path.join(self.data_folder, file_name)
+        file_path = os.path.normpath(file_path)
 
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f)
 
-    def load_file(self, file_name: str):
+    def open_file(self, file_name: str):
         if file_name not in self.get_list_files():
             raise err.FileNotFound(file_name)
 
